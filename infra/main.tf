@@ -50,9 +50,17 @@ resource "aws_s3_bucket" "website_bucket" {
   bucket = "${var.bucket_name}-frontend"
 }
 
-resource "aws_s3_bucket_acl" "website_acl" {
+resource "aws_s3_bucket_ownership_controls" "website_ownership" {
   bucket = aws_s3_bucket.website_bucket.id
-  acl    = "public-read"
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+resource "aws_s3_bucket_acl" "example" {
+  depends_on = [aws_s3_bucket_ownership_controls.website_ownership]
+
+  bucket = aws_s3_bucket.website_bucket.id
+  acl    = "private"
 }
 
 # resource "aws_s3_bucket_policy" "website_bucket" {
