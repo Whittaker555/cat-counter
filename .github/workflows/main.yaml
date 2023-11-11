@@ -20,12 +20,15 @@ jobs:
           node-version: '16'
 
       - name: Install dependencies
-        run: cd frontend && npm install
+        working-directory: /frontend
+        run: npm install
 
       - name: Build app
+        working-directory: /frontend
         run: npm run build
 
       - name: Upload to S3
+        working-directory: /frontend
         uses: jakejarvis/s3-sync-action@master
         with:
           args: --acl public-read
