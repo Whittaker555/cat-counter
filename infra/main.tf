@@ -14,7 +14,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = "gedotorg-lambda"
+  bucket = var.bucket_name
 }
 
 resource "aws_s3_bucket_ownership_controls" "lambda_bucket" {
@@ -37,12 +37,45 @@ data "archive_file" "lambda_archive" {
 
 resource "aws_s3_object" "geDOTorg-lambda" {
   bucket = aws_s3_bucket.lambda_bucket.id
-
   key    = "api.zip"
   source = data.archive_file.lambda_archive.output_path
 
   etag = filemd5(data.archive_file.lambda_archive.output_path)
 }
+
+
+## FRONTEND
+
+resource "aws_s3_bucket" "website_bucket" {
+  bucket = "${var.bucket_name}-frontend"
+}
+
+resource "aws_s3_bucket_acl" "website_acl" {
+  bucket = aws_s3_bucket.website_bucket.id
+  acl    = "public-read"
+}
+
+# resource "aws_s3_bucket_policy" "website_bucket" {
+#     bucket = aws_s3_bucket.website_bucket.id
+#     policy = jsonencode({
+#     Version = "2012-10-17"
+#     Statement = [
+#       {
+#         Sid = "PublicReadGetObject"
+#         Principal = "*"
+#         Action = [
+#           "s3:GetObject",
+#         ]
+#         Effect   = "Allow"
+#         Resource = [
+#           "${aws_s3_bucket.website_bucket.arn}",
+#           "${aws_s3_bucket.website_bucket.arn}/*"
+#         ]
+#       },
+#     ]
+#   })
+# }
+
 
 # LAMBDA
 
@@ -152,3 +185,5 @@ resource "aws_lambda_permission" "api_gw" {
 
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
 }
+
+## FRONTEND STORAGE
