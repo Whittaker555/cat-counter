@@ -13,6 +13,8 @@ provider "aws" {
   profile = "george"
 }
 
+## LAMBDA STORAGE
+
 resource "aws_s3_bucket" "lambda_bucket" {
   bucket = var.bucket_name
 }
@@ -44,10 +46,18 @@ resource "aws_s3_object" "geDOTorg-lambda" {
 }
 
 
-## FRONTEND
+## FRONTEND STORAGE
 
 resource "aws_s3_bucket" "website_bucket" {
   bucket = "${var.bucket_name}-frontend"
+}
+
+resource "aws_s3_bucket_website_configuration" "website_bucket_config" {
+  bucket = aws_s3_bucket.website_bucket.id
+
+  index_document {
+    suffix = "index.html"
+  }
 }
 
 resource "aws_s3_bucket_ownership_controls" "website_ownership" {
@@ -62,28 +72,6 @@ resource "aws_s3_bucket_acl" "example" {
   bucket = aws_s3_bucket.website_bucket.id
   acl    = "private"
 }
-
-# resource "aws_s3_bucket_policy" "website_bucket" {
-#     bucket = aws_s3_bucket.website_bucket.id
-#     policy = jsonencode({
-#     Version = "2012-10-17"
-#     Statement = [
-#       {
-#         Sid = "PublicReadGetObject"
-#         Principal = "*"
-#         Action = [
-#           "s3:GetObject",
-#         ]
-#         Effect   = "Allow"
-#         Resource = [
-#           "${aws_s3_bucket.website_bucket.arn}",
-#           "${aws_s3_bucket.website_bucket.arn}/*"
-#         ]
-#       },
-#     ]
-#   })
-# }
-
 
 # LAMBDA
 
@@ -129,10 +117,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-
 # GATEWAY
-
-
 
 resource "aws_apigatewayv2_api" "lambda" {
   name          = "serverless_lambda_gw"
@@ -193,5 +178,3 @@ resource "aws_lambda_permission" "api_gw" {
 
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
 }
-
-## FRONTEND STORAGE
