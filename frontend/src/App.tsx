@@ -2,7 +2,7 @@ import { ConfigProvider, Space, Layout} from 'antd';
 import React from 'react';
 import MyApp from './MyApp';
 
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Footer, Content } = Layout;
 const headerStyle: React.CSSProperties = {
   textAlign: 'center',
   color: '#fff',

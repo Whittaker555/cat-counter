@@ -1,6 +1,5 @@
-import { Button, Space, Layout } from 'antd';
+import { Button, Space } from 'antd';
 import React from "react";
-import Popup from "./components/popup";
 import { Statistic, Divider } from 'antd';
 import { HeartOutlined, HeartTwoTone } from '@ant-design/icons';
 
