@@ -1,5 +1,16 @@
-function Popup() {
+import { HeartOutlined } from '@ant-design/icons';
+
+interface PopupProps {
+    key: number;
+    message: string;
+}
+
+function Popup(props: PopupProps) {
     return (
-      <h1>HELLO CAT</h1>
+      <>
+        <p>{props.message}</p>
+        <HeartOutlined />
+      </>
+
     );
   } export default Popup;

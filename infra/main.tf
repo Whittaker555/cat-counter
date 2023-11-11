@@ -141,6 +141,11 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+resource "aws_iam_role_policy_attachment" "lambda_dynamoroles" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+}
+
 # GATEWAY
 
 resource "aws_apigatewayv2_api" "lambda" {
@@ -201,4 +206,18 @@ resource "aws_lambda_permission" "api_gw" {
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
+}
+
+# DYNAMODB
+
+resource "aws_dynamodb_table" "counter" {
+ name = "counter"
+ billing_mode = "PROVISIONED"
+ read_capacity= "30"
+ write_capacity= "30"
+ attribute {
+  name = "count"
+  type = "N"
+ }
+ hash_key = "count"
 }
