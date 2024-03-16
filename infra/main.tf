@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
     }
   }
 
@@ -9,7 +9,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "eu-west-2"
+  region  = "eu-west-2"
   profile = "george"
 }
 
@@ -27,14 +27,15 @@ resource "aws_s3_bucket_ownership_controls" "lambda_bucket" {
 }
 
 resource "aws_s3_bucket_acl" "lambda_bucket_acl" {
-  bucket = aws_s3_bucket.lambda_bucket.id
-  acl    = "private"
+  bucket     = aws_s3_bucket.lambda_bucket.id
+  depends_on = [aws_s3_bucket_ownership_controls.lambda_bucket]
+  acl        = "private"
 }
 
 data "archive_file" "lambda_archive" {
-  type = "zip"
-  source_dir  = "${path.module}/../api"
-  output_path = "${path.module}/../api.zip"
+  type        = "zip"
+  source_dir  = "${path.module}/../api/build"
+  output_path = "${path.module}/../api/build/api.zip"
 }
 
 resource "aws_s3_object" "geDOTorg-lambda" {
@@ -77,17 +78,17 @@ resource "aws_s3_bucket_public_access_block" "website_bucket_access_block" {
 }
 
 resource "aws_s3_bucket_policy" "website_bucket" {
-    bucket = aws_s3_bucket.website_bucket.id
-    policy = jsonencode({
+  bucket = aws_s3_bucket.website_bucket.id
+  policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
       {
-        Sid = "PublicReadGetObject"
+        Sid       = "PublicReadGetObject"
         Principal = "*"
         Action = [
           "s3:GetObject",
         ]
-        Effect   = "Allow"
+        Effect = "Allow"
         Resource = [
           "${aws_s3_bucket.website_bucket.arn}",
           "${aws_s3_bucket.website_bucket.arn}/*"
@@ -106,7 +107,7 @@ resource "aws_lambda_function" "geDOTorg_lambda_func" {
   s3_key    = aws_s3_object.geDOTorg-lambda.key
 
   runtime = "nodejs18.x"
-  handler = "index.handler"
+  handler = "server.handler"
 
   source_code_hash = data.archive_file.lambda_archive.output_base64sha256
 
@@ -141,10 +142,10 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_dynamoroles" {
-  role       = aws_iam_role.lambda_exec.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
-}
+# resource "aws_iam_role_policy_attachment" "lambda_dynamoroles" {
+#   role       = aws_iam_role.lambda_exec.name
+#   policy_arn = "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+# }
 
 # GATEWAY
 
@@ -156,40 +157,22 @@ resource "aws_apigatewayv2_api" "lambda" {
 resource "aws_apigatewayv2_stage" "lambda" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  name        = "serverless_lambda_stage"
+  name        = "$default"
   auto_deploy = true
-
-  access_log_settings {
-    destination_arn = aws_cloudwatch_log_group.api_gw.arn
-
-    format = jsonencode({
-      requestId               = "$context.requestId"
-      sourceIp                = "$context.identity.sourceIp"
-      requestTime             = "$context.requestTime"
-      protocol                = "$context.protocol"
-      httpMethod              = "$context.httpMethod"
-      resourcePath            = "$context.resourcePath"
-      routeKey                = "$context.routeKey"
-      status                  = "$context.status"
-      responseLength          = "$context.responseLength"
-      integrationErrorMessage = "$context.integrationErrorMessage"
-      }
-    )
-  }
 }
 
 resource "aws_apigatewayv2_integration" "geDOTorg_gateway" {
-  api_id = aws_apigatewayv2_api.lambda.id
+  api_id           = aws_apigatewayv2_api.lambda.id
+  integration_type = "AWS_PROXY"
 
-  integration_uri    = aws_lambda_function.geDOTorg_lambda_func .invoke_arn
-  integration_type   = "AWS_PROXY"
   integration_method = "POST"
+  integration_uri    = aws_lambda_function.geDOTorg_lambda_func.invoke_arn
 }
 
 resource "aws_apigatewayv2_route" "route" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key = "GET /hello"
+  route_key = "ANY /{proxy+}"
   target    = "integrations/${aws_apigatewayv2_integration.geDOTorg_gateway.id}"
 }
 
@@ -208,16 +191,17 @@ resource "aws_lambda_permission" "api_gw" {
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
 }
 
-# DYNAMODB
+# # # DYNAMODB
 
-resource "aws_dynamodb_table" "counter" {
- name = "counter"
- billing_mode = "PROVISIONED"
- read_capacity= "30"
- write_capacity= "30"
- attribute {
-  name = "count"
-  type = "N"
- }
- hash_key = "count"
-}
+# resource "aws_dynamodb_table" "counter" {
+#   name         = "counter"
+#   billing_mode = "PAY_PER_REQUEST"
+#   hash_key     = "param"
+#   attribute {
+#     name = "param"
+#     type = "S"
+#   }
+#   tags = {
+#     Name = "db"
+#   }
+# }
