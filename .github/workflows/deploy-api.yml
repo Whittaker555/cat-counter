@@ -13,13 +13,13 @@ jobs:
         run: (cd api && yarn)
 
       - name: Build
-        run: yarn build
+        run: (cd api && yarn build)
 
       - name: Move node_modules to dist
-        run: mv node_modules build/node_modules
+        run: (cd api && mv node_modules build/node_modules)
 
       - name: Zip
-        run: (cd build && zip -r ../function.zip .)
+        run: (cd api/build && zip -r ../function.zip .)
 
       - name: Deploy to AWS
         uses: appleboy/lambda-action@master
