@@ -168,6 +168,7 @@ __pycache__
 compile_commands.json
 
 api/node_modules
+api/build/*
 
 infra/terraform/*
 *.zip
