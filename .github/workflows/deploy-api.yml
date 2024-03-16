@@ -1,10 +1,9 @@
-name: Deploy
+name: Deploy Api
 
 on:
   push:
     branches: [ master ]
   workflow_dispatch:
-    branches: [ "main" ]
     
 jobs:
   deploy:
