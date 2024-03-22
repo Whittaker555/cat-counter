@@ -5,7 +5,7 @@
   "main": "source/server.ts",
   "scripts": {
     "dev": "nodemon source/server.ts",
-    "build": "rm -rf build/ && prettier --write source/ && tsc"
+    "build": "rm -rf build/ && prettier --write source/ && tsc && cp -r node_modules build/"
   },
   "author": "",
   "license": "ISC",
