@@ -38,7 +38,7 @@ data "archive_file" "lambda_archive" {
   output_path = "${path.module}/../api/build/api.zip"
 }
 
-resource "aws_s3_object" "geDOTorg-lambda" {
+resource "aws_s3_object" "catcounter-lambda" {
   bucket = aws_s3_bucket.lambda_bucket.id
   key    = "api.zip"
   source = data.archive_file.lambda_archive.output_path
@@ -100,11 +100,11 @@ resource "aws_s3_bucket_policy" "website_bucket" {
 
 # LAMBDA
 
-resource "aws_lambda_function" "geDOTorg_lambda_func" {
-  function_name = "geDOTorg-api"
+resource "aws_lambda_function" "catcounter_lambda_func" {
+  function_name = "catcounter-api"
 
   s3_bucket = aws_s3_bucket.lambda_bucket.id
-  s3_key    = aws_s3_object.geDOTorg-lambda.key
+  s3_key    = aws_s3_object.catcounter-lambda.key
 
   runtime = "nodejs18.x"
   handler = "server.handler"
@@ -114,8 +114,8 @@ resource "aws_lambda_function" "geDOTorg_lambda_func" {
   role = aws_iam_role.lambda_exec.arn
 }
 
-resource "aws_cloudwatch_log_group" "geDOTorg_lambda_log_group" {
-  name = "/aws/lambda/${aws_lambda_function.geDOTorg_lambda_func.function_name}"
+resource "aws_cloudwatch_log_group" "catcounter_lambda_log_group" {
+  name = "/aws/lambda/${aws_lambda_function.catcounter_lambda_func.function_name}"
 
   retention_in_days = 30
 }
@@ -161,19 +161,19 @@ resource "aws_apigatewayv2_stage" "lambda" {
   auto_deploy = true
 }
 
-resource "aws_apigatewayv2_integration" "geDOTorg_gateway" {
+resource "aws_apigatewayv2_integration" "catcounter_gateway" {
   api_id           = aws_apigatewayv2_api.lambda.id
   integration_type = "AWS_PROXY"
 
   integration_method = "POST"
-  integration_uri    = aws_lambda_function.geDOTorg_lambda_func.invoke_arn
+  integration_uri    = aws_lambda_function.catcounter_lambda_func.invoke_arn
 }
 
 resource "aws_apigatewayv2_route" "route" {
   api_id = aws_apigatewayv2_api.lambda.id
 
   route_key = "ANY /{proxy+}"
-  target    = "integrations/${aws_apigatewayv2_integration.geDOTorg_gateway.id}"
+  target    = "integrations/${aws_apigatewayv2_integration.catcounter_gateway.id}"
 }
 
 resource "aws_cloudwatch_log_group" "api_gw" {
@@ -185,7 +185,7 @@ resource "aws_cloudwatch_log_group" "api_gw" {
 resource "aws_lambda_permission" "api_gw" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.geDOTorg_lambda_func.function_name
+  function_name = aws_lambda_function.catcounter_lambda_func.function_name
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"

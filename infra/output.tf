@@ -1,7 +1,7 @@
 output "function_name" {
   description = "Name of the Lambda function."
 
-  value = aws_lambda_function.geDOTorg_lambda_func.function_name
+  value = aws_lambda_function.catcounter_lambda_func.function_name
 }
 
 output "base_url" {
