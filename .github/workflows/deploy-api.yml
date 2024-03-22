@@ -15,9 +15,6 @@ jobs:
       - name: Build
         run: (cd api && yarn build)
 
-      - name: Move node_modules to dist
-        run: (cd api && mv node_modules build/node_modules)
-
       - name: Zip
         run: (cd api/build && zip -r ../function.zip .)
 
