@@ -25,13 +25,8 @@ router.use((req, res, next) => {
 
 router.use("/", routes);
 
-app.get("/", (req, res) => {
-  return res.status(200).json({
-    message: "Hello from Express on AWS Lambda!",
-  });
-});
 router.use((req, res, next) => {
-  const error: any = new Error("Not in app Found");
+  const error: any = new Error("Not Found");
   error.status = 404;
   return res.status(404).json({
     message: error.message,
@@ -40,8 +35,8 @@ router.use((req, res, next) => {
 
 app.use(router);
 
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//   console.log(`Api is running in http://localhost:${PORT}`);
-// });
-module.exports.handler = serverless(app);
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Api is running in http://localhost:${PORT}`);
+});
+// module.exports.handler = serverless(app);

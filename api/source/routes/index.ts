@@ -1,8 +1,8 @@
 import express from "express";
-import test from "./test";
+import count from "./count";
 
 const router = express.Router();
 
-router.use("/test", test);
+router.use("/count", count);
 
 export default router;
