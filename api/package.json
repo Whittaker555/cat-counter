@@ -1,20 +1,27 @@
 {
-  "name": "gedotorg",
+  "name": "ge-dot-org-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "source/server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "nodemon source/server.ts",
+    "build": "rm -rf build/ && prettier --write source/ && tsc && cp -r node_modules build/"
   },
-  "author": "George Whittaker",
+  "author": "",
   "license": "ISC",
   "dependencies": {
-    "aws-lambda": "^1.0.7",
-    "express": "^4.18.2"
+    "@types/axios": "^0.14.0",
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "axios": "^1.6.8",
+    "express": "^4.18.3",
+    "morgan": "^1.10.0",
+    "nodemon": "^3.1.0",
+    "serverless-http": "^3.2.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.2"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.126",
-    "@types/express": "^4.17.21",
-    "@types/node": "^20.9.0"
+    "prettier": "3.2.5"
   }
 }
