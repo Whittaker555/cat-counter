@@ -14,22 +14,22 @@ provider "aws" {
 }
 
 module "storage" {
-  source = "./s3"
+  source      = "./s3"
   bucket_name = "${var.app_name}-bucket"
 
 }
 
 module "lambda" {
-  depends_on = [ module.storage ]
-  source = "./lambda"
-  function_name = "${var.app_name}-api"
+  depends_on     = [module.storage]
+  source         = "./lambda"
+  function_name  = "${var.app_name}-api"
   storage_bucket = module.storage.bucket_name
-  storage_key =  module.storage.object_key
+  storage_key    = module.storage.object_key
 }
 
 module "api-gateway" {
-  depends_on = [ module.lambda ]
-  source = "./gateway"
-  gateway_name = "${var.app_name}-gateway"
+  depends_on           = [module.lambda]
+  source               = "./gateway"
+  gateway_name         = "${var.app_name}-gateway"
   lambda_function_name = module.lambda.lambda_function_name
 }

@@ -1,4 +1,4 @@
 variable "app_name" {
-  type        = string
-  default     = "catcounter"
+  type    = string
+  default = "catcounter"
 }

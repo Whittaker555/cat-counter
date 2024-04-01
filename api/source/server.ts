@@ -35,8 +35,8 @@ router.use((req, res, next) => {
 
 app.use(router);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Api is running in http://localhost:${PORT}`);
-});
-// module.exports.handler = serverless(app);
+// const PORT = process.env.PORT || 3000;
+// app.listen(PORT, () => {
+//   console.log(`Api is running in http://localhost:${PORT}`);
+// });
+module.exports.handler = serverless(app);
