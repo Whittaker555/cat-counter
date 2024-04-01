@@ -12,6 +12,9 @@ provider "aws" {
   region  = "eu-west-2"
   profile = "george"
 }
+module "dynamo" {
+  source = "./dynamo"
+}
 
 module "storage" {
   source      = "./s3"
