@@ -1,16 +1,8 @@
 import { ConfigProvider, Space, Layout} from 'antd';
 import React from 'react';
-import MyApp from './MyApp';
+import CatCounter from './cat-counter';
 
-const { Header, Footer, Content } = Layout;
-const headerStyle: React.CSSProperties = {
-  textAlign: 'center',
-  color: '#fff',
-  height: 64,
-  paddingInline: 50,
-  lineHeight: '64px',
-  backgroundColor: 'black',
-};
+const { Footer, Content } = Layout;
 
 const contentStyle: React.CSSProperties = {
   textAlign: 'center',
@@ -30,8 +22,9 @@ const App: React.FC = () => (
   <ConfigProvider theme={{ token: { colorPrimary: '#520000' } }}>
     <Space direction="vertical" style={{ width: '100%' }} size={[0, 48]}>
       <Layout>
-        <Header style={headerStyle}></Header>
-        <Content style={contentStyle}><MyApp/></Content>
+        <Content style={contentStyle}>
+          <CatCounter/>
+          </Content>
         <Footer style={footerStyle}>A special website for a special lady</Footer>
       </Layout>
     </Space>

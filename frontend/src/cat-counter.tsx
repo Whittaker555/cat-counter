@@ -5,44 +5,54 @@ import { HeartOutlined, HeartTwoTone } from "@ant-design/icons";
 import { debounce } from "lodash";
 import axios, { AxiosResponse } from "axios";
 
-function MyApp() {
-
+function CatCounter() {
   const [clicked, setClicked] = React.useState<number>(0);
+
   useEffect(() => {
     axios
-      .get("http://localhost:3000/count")
+      .get("https://mydmmmeum8.execute-api.eu-west-2.amazonaws.com/count")
       .then((res: AxiosResponse) => {
-        setClicked(res.data)
-      })
-  })
+        setClicked(res.data);
+      });
+  }, []);
+
+  function handleClick() {
+    incrementCount();
+    debouncedRequest();
+  }
+
   function incrementCount() {
     setClicked(clicked + 1);
   }
-  function handleClick() {
-    incrementCount();
-    debouncedRequest()
-  }
+
   const useDebounce = (callback: any) => {
     const ref = useRef<() => void>();
 
     useEffect(() => {
-        ref.current = callback;
+      ref.current = callback;
     }, [callback]);
 
     const debouncedCallback = useMemo(() => {
-        const func = () => {
-            ref.current?.();
-        };
+      const func = () => {
+        ref.current?.();
+      };
 
-        return debounce(func, 1000);
+      return debounce(func, 1000);
     }, []);
-  
+
     return debouncedCallback;
   };
 
   const debouncedRequest = useDebounce(() => {
-    console.log(clicked);
+    axios
+      .put("https://mydmmmeum8.execute-api.eu-west-2.amazonaws.com/count", {
+        count: clicked,
+      })
+      .then((res: AxiosResponse) => {
+        console.log(res.data);
+      });
   });
+
   return (
     <div className="App">
       <Space direction="vertical">
@@ -65,4 +75,4 @@ function MyApp() {
     </div>
   );
 }
-export default MyApp;
+export default CatCounter;
