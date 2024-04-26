@@ -2,15 +2,7 @@ import { ConfigProvider, Space, Layout} from 'antd';
 import React from 'react';
 import CatCounter from './cat-counter';
 
-const { Header, Footer, Content } = Layout;
-const headerStyle: React.CSSProperties = {
-  textAlign: 'center',
-  color: '#fff',
-  height: 64,
-  paddingInline: 50,
-  lineHeight: '64px',
-  backgroundColor: 'black',
-};
+const { Footer, Content } = Layout;
 
 const contentStyle: React.CSSProperties = {
   textAlign: 'center',
