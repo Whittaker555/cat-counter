@@ -37,6 +37,6 @@ app.use(router);
 
 // const PORT = process.env.PORT || 3000;
 // app.listen(PORT, () => {
-//   console.log(`Api is running in http://localhost:${PORT}`);
+  //   console.log(`Api is running in http://localhost:${PORT}`);
 // });
 module.exports.handler = serverless(app);
