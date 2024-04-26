@@ -1,11 +1,16 @@
 resource "aws_dynamodb_table" "counter" {	
   name         = "counter"	
   billing_mode = "PAY_PER_REQUEST"	
-  hash_key     = "param"	
+  hash_key     = "counterName"
+  range_key = "person"
   attribute {	
-    name = "param"	
+    name = "counterName"	
     type = "S"	
   }	
+  attribute {	
+    name = "person"	
+    type = "S"	
+  }
   tags = {	
     Name = "db"	
   }	

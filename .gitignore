@@ -175,3 +175,4 @@ infra/terraform/*
 
 *.tfstate
 infra/terraform.tfstate.backup
+infra/api/terraform.tfstate.backup
